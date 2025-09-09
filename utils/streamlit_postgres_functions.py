@@ -12,9 +12,16 @@ from sqlalchemy.exc import SQLAlchemyError
 from datetime import date, datetime
 from typing import Tuple, List, Dict
 import re, unicodedata
+import os
 
 
-db_url = "postgresql://postgres:LlMQsPXTOlvnvtSwGJyitvqCOyhIOXzc@trolley.proxy.rlwy.net:43349/railway?sslmode=require"
+# --- Database Connection ---
+# For Railway deployment, the DATABASE_URL is injected as an environment variable.
+# The hardcoded URL is a fallback for local development only.
+db_url = os.environ.get(
+    "DATABASE_URL",
+    "postgresql://postgres:LlMQsPXTOlvnvtSwGJyitvqCOyhIOXzc@trolley.proxy.rlwy.net:43349/railway?sslmode=require"
+)
 
 
 # Cache the engine once per session
