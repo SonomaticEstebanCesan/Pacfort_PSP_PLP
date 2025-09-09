@@ -14,16 +14,16 @@ from typing import Tuple, List, Dict
 import re, unicodedata
 import os
 import logging
+from dotenv import load_dotenv
 
+
+# Load .env file if present (safe locally, ignored on Railway)
+load_dotenv()
 
 # --- Database Connection ---
-# For Railway deployment, the DATABASE_URL is injected as an environment variable.
-# The hardcoded URL is a fallback for local development only.
-db_url = os.environ.get(
-    "DATABASE_URL",
-    "postgresql://postgres:LlMQsPXTOlvnvtSwGJyitvqCOyhIOXzc@trolley.proxy.rlwy.net:43349/railway?sslmode=require"
-)
-
+db_url = os.getenv("DATABASE_URL")
+if not db_url:
+    raise RuntimeError("DATABASE_URL is not set. Add it in .env for local dev or Railway → Variables.")
 
 # Cache the engine once per session
 @st.cache_resource
