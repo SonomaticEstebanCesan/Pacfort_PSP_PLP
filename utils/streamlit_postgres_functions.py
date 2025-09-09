@@ -13,6 +13,7 @@ from datetime import date, datetime
 from typing import Tuple, List, Dict
 import re, unicodedata
 import os
+import logging
 
 
 # --- Database Connection ---
@@ -214,6 +215,7 @@ def insert_order_row(table_name: str, row: dict) -> dict:
             pk = res.scalar()
         return {"ok": True, "inserted_pk": pk, "clean": clean, "errors": {}}
     except Exception as e:
+        logging.error(f"Database insert failed for table {table_name}", exc_info=True)
         return {"ok": False, "error": str(e), "clean": clean, "errors": {}}
 
 def update_order_row(table_name: str, order_id: int, row: dict) -> dict:
@@ -263,4 +265,5 @@ def update_order_row(table_name: str, order_id: int, row: dict) -> dict:
             "errors": {},
         }
     except Exception as e:
+        logging.error(f"Database update failed for table {table_name}, pk {order_id}", exc_info=True)
         return {"ok": False, "error": str(e), "clean": clean, "errors": {}}
