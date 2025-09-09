@@ -14,8 +14,8 @@ import pandas as pd
 from st_aggrid import AgGrid, GridOptionsBuilder
 from datetime import datetime
 from datetime import date, timedelta
-import lib.streamlit_postgres_functions as spf
-from lib.data_bootstrap import ensure_bootstrap, get_dataframes
+import utils.streamlit_postgres_functions as spf
+from utils.data_bootstrap import ensure_bootstrap, get_dataframes
 
 st.set_page_config(layout="wide")
 

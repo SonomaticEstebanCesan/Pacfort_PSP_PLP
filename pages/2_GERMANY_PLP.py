@@ -6,7 +6,7 @@ Created on Tue Sep  2 13:32:12 2025
 """
 
 import streamlit as st
-from lib.data_bootstrap import ensure_bootstrap, get_dataframes
+from utils.data_bootstrap import ensure_bootstrap, get_dataframes
 
 st.set_page_config(layout="wide", page_title="Germany PLP")
 
