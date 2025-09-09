@@ -1180,10 +1180,11 @@ elif chosen_tab == "Add New Order":
                 "Remarks": remarks,
             }
             new_row = {k: v for k, v in new_row.items() if v is not None}
-            print(new_row)
+            result = {"ok": False}
             try:
                 result = spf.insert_order_row("Samples_PSPGermany", new_row)
             except Exception as e:
+                result["error"] = str(e)
                 logging.exception("An unhandled exception occurred while inserting a Sample order.")
                 st.exception(e)  # shows full traceback
             
