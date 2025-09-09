@@ -14,6 +14,7 @@ import pandas as pd
 from st_aggrid import AgGrid, GridOptionsBuilder
 from datetime import datetime
 from datetime import date, timedelta
+import logging
 import utils.streamlit_postgres_functions as spf
 from utils.data_bootstrap import ensure_bootstrap, get_dataframes
 
@@ -808,7 +809,9 @@ elif chosen_tab == "Edit Existing Order":
                 st.session_state["flash_toast"] = f"✅ Order {order_id} updated."
                 st.rerun()
             else:
-                st.error(f'Update failed: {result.get("error")}')
+                error_message = result.get("error")
+                logging.error(f"Failed to update LPO order {order_id}: {error_message}")
+                st.error(f'Update failed: {error_message}')
 
     elif dataset_choice == "Samples":
         # --- normalize selected_row to a dict ---
@@ -970,7 +973,9 @@ elif chosen_tab == "Edit Existing Order":
                 st.session_state["flash_toast"] = f"✅ Sample {sample_id} updated."
                 st.rerun()
             else:
-                st.error(f'Update failed: {result.get("error")}')
+                error_message = result.get("error")
+                logging.error(f"Failed to update Sample order {sample_id}: {error_message}")
+                st.error(f'Update failed: {error_message}')
         
 #### TAB 3B
 elif chosen_tab == "Add New Order":
@@ -1096,8 +1101,11 @@ elif chosen_tab == "Add New Order":
                 st.session_state["flash_toast"] = f'✅ Order added to LPO! (Order_id={result.get("inserted_pk")})'
                 st.rerun()
             else:
-                st.error(f'Insert failed: {result.get("error")}')
-                for col, msg in (result.get("errors") or {}).items():
+                error_message = result.get("error")
+                validation_errors = result.get("errors")
+                logging.error(f"Failed to insert LPO order. Error: {error_message}. Validation errors: {validation_errors}")
+                st.error(f'Insert failed: {error_message}')
+                for col, msg in (validation_errors or {}).items():
                     st.warning(f"{col}: {msg}")
 
 
@@ -1176,6 +1184,7 @@ elif chosen_tab == "Add New Order":
             try:
                 result = spf.insert_order_row("Samples_PSPGermany", new_row)
             except Exception as e:
+                logging.exception("An unhandled exception occurred while inserting a Sample order.")
                 st.exception(e)  # shows full traceback
             
             if result.get("ok"):
@@ -1184,8 +1193,11 @@ elif chosen_tab == "Add New Order":
                 st.session_state["flash_toast"] = f'✅ Order added to Sample Orders! (Sample_id={result.get("inserted_pk")})'
                 st.rerun()
             else:
-                st.error(f'Insert failed: {result.get("error")}')
-                for col, msg in (result.get("errors") or {}).items():
+                error_message = result.get("error")
+                validation_errors = result.get("errors")
+                logging.error(f"Failed to insert Sample order. Error: {error_message}. Validation errors: {validation_errors}")
+                st.error(f'Insert failed: {error_message}')
+                for col, msg in (validation_errors or {}).items():
                     st.warning(f"{col}: {msg}")
 
 
