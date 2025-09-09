@@ -16,21 +16,22 @@ import os
 import logging
 from dotenv import load_dotenv
 
-
-# Load .env file if present (safe locally, ignored on Railway)
+# Load .env locally (Railway ignores it and injects env vars itself)
 load_dotenv()
 
-# --- Database Connection ---
-db_url = os.getenv("DATABASE_URL")
-if not db_url:
-    raise RuntimeError("DATABASE_URL is not set. Add it in .env for local dev or Railway → Variables.")
+logger = logging.getLogger(__name__)
 
-# Cache the engine once per session
-@st.cache_resource
+# Cache the engine once per process
+@st.cache_resource(show_spinner=False)
 def get_engine():
-    return create_engine(db_url, pool_pre_ping=True)
+    url = os.getenv("DATABASE_URL")  # <-- read at call time, not import time
+    if not url:
+        # Don't print secrets; just say it's missing
+        logger.error("DATABASE_URL is not set. Add it in .env (local) or Railway → Variables.")
+        raise RuntimeError("DATABASE_URL is not set. Add it in .env for local dev or Railway → Variables.")
+    return create_engine(url, pool_pre_ping=True)
 
-# Cache the table loads (per table name)
+# Cache table loads by name
 @st.cache_data(show_spinner=False)
 def load_table_from_db(table_name: str) -> pd.DataFrame:
     eng = get_engine()
