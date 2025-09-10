@@ -151,6 +151,13 @@ def render(df1, df2):
     gb = GridOptionsBuilder.from_dataframe(df_view)
     gb.configure_default_column(editable=False, filter=True, sortable=True, resizable=True)
 
+    # Enable copy/paste + text selection
+    gb.configure_grid_options(
+        enableRangeSelection=True,
+        enableClipboard=True,
+        enableCellTextSelection=True
+    )
+    
     # Separator styling
     gb.configure_column(
         SEP_COL,
