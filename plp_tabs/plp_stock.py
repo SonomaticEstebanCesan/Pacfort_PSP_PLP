@@ -116,11 +116,15 @@ def render(df1, df2):
         )
     else:
         filtered = filtered.reset_index(drop=True)
+    
+        # --- NEW: build SOLI as SO-LI ---
+    if "SO" in filtered.columns and "LI" in filtered.columns:
+        filtered["SOLI"] = filtered["SO"].astype(str) + filtered["LI"].astype(str)
 
     # ---------- 2) Build grouped view (two blocks + separator) ----------
     # Block 1
     block1 = [
-        "Client", "DATE", "SO", "LI", "SOLI",
+        "Order_id", "CLIENT", "DATE", "SO", "LI", "SOLI",
         "ITEM CODE", "Category", "Order Qty",
         "Delivery date", "Status"
     ]
@@ -150,13 +154,14 @@ def render(df1, df2):
     # ---------- 3) Grid options ----------
     gb = GridOptionsBuilder.from_dataframe(df_view)
     gb.configure_default_column(editable=False, filter=True, sortable=True, resizable=True)
-
+    
     # Enable copy/paste + text selection
     gb.configure_grid_options(
         enableRangeSelection=True,
         enableClipboard=True,
         enableCellTextSelection=True
     )
+
     
     # Separator styling
     gb.configure_column(
@@ -199,4 +204,6 @@ def render(df1, df2):
         fit_columns_on_grid_load=False,
         allow_unsafe_jscode=True,
         theme="streamlit",
+        enable_enterprise_modules=True
     )
+
